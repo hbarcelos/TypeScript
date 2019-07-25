@@ -1367,14 +1367,28 @@ interface ArrayConstructor {
 
 declare const Array: ArrayConstructor;
 
-interface TypedPropertyDescriptor<T> {
-    enumerable?: boolean;
-    configurable?: boolean;
-    writable?: boolean;
-    value?: T;
-    get?: () => T;
-    set?: (value: T) => void;
+interface TypedCommonDescriptor {
+  enumerable?: boolean
+  configurable?: boolean
 }
+
+interface TypedDataDescriptor<T> extends TypedCommonDescriptor {
+  value?: T
+  writable?: boolean
+  set?: never
+  get?: never
+}
+
+interface TypedAccessorDescriptor<T> extends TypedCommonDescriptor {
+  value?: never
+  writable?: never
+  set?: (value?: T) => void
+  get?: () => T | undefined
+}
+
+type TypedPropertyDescriptor<T = any> =
+  | TypedDataDescriptor<T>
+  | TypedAccessorDescriptor<T>
 
 declare type ClassDecorator = <TFunction extends Function>(target: TFunction) => TFunction | void;
 declare type PropertyDecorator = (target: Object, propertyKey: string | symbol) => void;
